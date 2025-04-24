@@ -1,78 +1,85 @@
 import os
 import json
+import random
 from datetime import datetime
 from pathlib import Path
-import random
+import requests
 import google.generativeai as genai
 
-# Gemini APIキーの読み込み
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+# APIキー取得
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+SERPAPI_KEY = os.environ.get("SERPAPI_KEY")
 
-# モデルの初期化
-model = genai.GenerativeModel("gemini-1.5-flash")
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-pro")
 
-def get_twitter_comments(country):
+# 検索実行（SerpAPI）
+def search_twitter_comments(country):
+    query = f"site:twitter.com 万博2025 {country} パビリオン"
+    params = {
+        "q": query,
+        "api_key": SERPAPI_KEY,
+        "engine": "google",
+        "num": 10,
+    }
+    response = requests.get("https://serpapi.com/search", params=params)
+    data = response.json()
+    results = []
+
+    for res in data.get("organic_results", []):
+        title = res.get("title", "")
+        snippet = res.get("snippet", "")
+        link = res.get("link", "")
+        results.append(f"- {title}\n  {snippet}\n  {link}")
+
+    return results
+
+# Gemini記事生成
+def generate_blog_from_results(country, search_results):
+    search_summary = "\n".join(search_results)
     prompt = f"""
-次の条件でTwitterから情報を集めてください。
-
-・2025年大阪・関西万博に出展している「{country}パビリオン」について実際に言及しているTwitter投稿を検索し、そのまま日本語で5件引用してください。
-・ない場合はWEBの公式の公開予定の情報を参考にしてください。
-・出力形式は「- コメント内容（@ユーザー名）」としてください。
-"""
-    response = model.generate_content(prompt)
-    return [line.strip() for line in response.text.strip().split("\n") if line.strip().startswith("-")]
-
-def generate_blog_content(country, comments):
-    comment_section = "\n".join(comments)
-    prompt = f"""
-以下のTwitterコメントを引用して、2025年大阪・関西万博の「{country}パビリオン」について、魅力や文化的背景、注目の体験、建築デザイン、展示内容などを紹介するブログ記事をMarkdown形式で作成してください。
-
-# コメント一覧
-{comment_section}
-
-# 出力形式
-・見出し付きMarkdown
-・3000字程度
-・コメントはそのまま引用として掲載し、それを踏まえた構成としてください
+以下の検索結果に基づいて、2025年大阪・関西万博に出展する「{country}パビリオン」について、SNS上での口コミや文化的魅力を3000字程度のブログ記事にまとめてください。
+Markdown形式で、コメント引用部分と解説を分けて見やすく構成してください。
 ・WEBに公開されている写真があればリンクを埋め込んでください。
 ・まだ公開されてない場合はWEBから予想図の写真をリンク貼り付けしてください。
+検索結果:
+{search_summary}
 """
     response = model.generate_content(prompt)
     return response.text.strip()
 
+# 使用済み管理
+root_dir = Path(os.getcwd())
+json_path = root_dir / "used_pavilion_gemini.json"
+all_path = root_dir / "all_countries.json"
+posts_dir = root_dir / "_posts"
+posts_dir.mkdir(parents=True, exist_ok=True)
 
-# 使用済みリストの読み込みと更新
-json_path = Path(__file__).parent / "used_pavilion_gemini.json"
 with open(json_path, "r", encoding="utf-8") as f:
     used_data = json.load(f)
-
-# 全国家リストの読み込み（別ファイルとして管理）
-with open(Path(__file__).parent / "all_countries.json", "r", encoding="utf-8") as f:
+with open(all_path, "r", encoding="utf-8") as f:
     all_data = json.load(f)
+
 all_countries = set(all_data["countries"])
 used_countries = set(used_data["used"])
 remaining_countries = list(all_countries - used_countries)
 
 if not remaining_countries:
-    print("すべての国のパビリオンが生成済みです。")
+    print("すべての国が処理済みです。")
     exit()
 
-# 国を1つ選んで記事生成
+# ランダム国処理
 country = random.choice(remaining_countries)
-safe_title = country.replace("・", "").replace("（", "").replace("）", "")
-comments = get_twitter_comments(country)
-content = generate_blog_content(country, comments)
+safe_title = country.replace("・", "").replace("（", "").replace("）", "").replace(" ", "")
+results = search_twitter_comments(country)
+content = generate_blog_from_results(country, results)
 
-root_dir = Path(os.getcwd())  # 実行時カレントディレクトリに合わせる
-posts_dir = root_dir / "_posts"
-posts_dir.mkdir(parents=True, exist_ok=True)
-
-# ファイル書き出し
+# 保存
 post_path = posts_dir / f"{datetime.now().strftime('%Y-%m-%d')}-{safe_title}.md"
 with open(post_path, "w", encoding="utf-8") as f:
     f.write(content)
 
-# 使用履歴を更新
+# 使用済み記録
 used_data["used"].append(country)
 with open(json_path, "w", encoding="utf-8") as f:
     json.dump(used_data, f, ensure_ascii=False, indent=2)

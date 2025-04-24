@@ -12,7 +12,7 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 GOOGLE_SEARCH_CX = os.environ.get("GOOGLE_SEARCH_CX")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-pro")
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 # PSE検索実行 + JSON記録
 def search_google_pse(country):

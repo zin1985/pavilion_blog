@@ -2,7 +2,7 @@ name: Generate Pavilion Blog
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # 5分ごとに実行
+    - cron: '0 6 * * *'  # 5分ごとに実行
   workflow_dispatch:
 
 permissions:

@@ -1,0 +1,61 @@
+
+body {
+  font-family: 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f7f7f7;
+  color: #333;
+}
+
+.container {
+  width: 90%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.site-header {
+  background: #222;
+  color: #fff;
+  padding: 1.5em 0;
+  text-align: center;
+}
+
+.site-title a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 2em;
+}
+
+.site-description {
+  margin-top: 0.3em;
+  font-size: 1em;
+  color: #ccc;
+}
+
+.site-nav {
+  background: #333;
+  padding: 0.5em 0;
+  text-align: center;
+}
+
+.site-nav a {
+  color: #fff;
+  margin: 0 1em;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.site-content {
+  background: #fff;
+  padding: 2em;
+  margin-top: 1em;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.site-footer {
+  background: #eee;
+  padding: 1em 0;
+  text-align: center;
+  font-size: 0.9em;
+  margin-top: 2em;
+}

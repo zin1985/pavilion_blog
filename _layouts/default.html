@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page.title }} | {{ site.title }}</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/style.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3910332370256182"
+     crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1 class="site-title"><a href="{{ site.baseurl }}/">{{ site.title }}</a></h1>
+        <p class="site-description">{{ site.description }}</p>
+      </div>
+      <nav class="site-nav">
+        <div class="container">
+          <a href="{{ site.baseurl }}/">ホーム</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="site-content container">
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; {{ site.time | date: '%Y' }} {{ site.title }}. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -16,7 +16,7 @@ def get_twitter_comments(country):
 次の条件でTwitterから情報を集めてください。
 
 ・2025年大阪・関西万博に出展している「{country}パビリオン」について実際に言及しているTwitter投稿を検索し、そのまま日本語で5件引用してください。
-・引用元が不明な場合は想定ではなく実際にありそうな自然な文体で、Twitter風に仕立ててください。
+・ない場合はWEBの公式の公開予定の情報を参考にしてください。
 ・出力形式は「- コメント内容（@ユーザー名）」としてください。
 """
     response = model.generate_content(prompt)
@@ -34,6 +34,8 @@ def generate_blog_content(country, comments):
 ・見出し付きMarkdown
 ・3000字程度
 ・コメントはそのまま引用として掲載し、それを踏まえた構成としてください
+・WEBに公開されている写真があればリンクを埋め込んでください。
+・まだ公開されてない場合はWEBから予想図の写真をリンク貼り付けしてください。
 """
     response = model.generate_content(prompt)
     return response.text.strip()

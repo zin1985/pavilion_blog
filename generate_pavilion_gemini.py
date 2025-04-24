@@ -57,6 +57,7 @@ if not remaining_countries:
 
 # 国を1つ選んで記事生成
 country = random.choice(remaining_countries)
+safe_title = country.replace("・", "").replace("（", "").replace("）", "")
 comments = get_twitter_comments(country)
 content = generate_blog_content(country, comments)
 

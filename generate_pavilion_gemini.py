@@ -6,49 +6,52 @@ from pathlib import Path
 import requests
 import google.generativeai as genai
 
-# APIキー取得
+# APIキーとSearch Engine ID
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-SERPAPI_KEY = os.environ.get("SERPAPI_KEY")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+GOOGLE_SEARCH_CX = os.environ.get("GOOGLE_SEARCH_CX")  # Programmable Search EngineのID
 
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-pro")
 
-# 検索実行（SerpAPI）
-def search_twitter_comments(country):
-    query = f"site:twitter.com 万博2025 {country} パビリオン"
-    params = {
-        "q": query,
-        "api_key": SERPAPI_KEY,
-        "engine": "google",
-        "num": 10,
-    }
-    response = requests.get("https://serpapi.com/search", params=params)
-    data = response.json()
-    results = []
+# PSE検索実行
+def search_google_pse(country):
+    search_terms = ["パビリオン", "食事", "キャラクター", "イベント"]
+    combined_results = []
 
-    for res in data.get("organic_results", []):
-        title = res.get("title", "")
-        snippet = res.get("snippet", "")
-        link = res.get("link", "")
-        results.append(f"- {title}\n  {snippet}\n  {link}")
+    for term in search_terms:
+        query = f"万博2025 {country} {term}"
+        params = {
+            "key": GOOGLE_API_KEY,
+            "cx": GOOGLE_SEARCH_CX,
+            "q": query,
+            "num": 5,
+        }
+        response = requests.get("https://www.googleapis.com/customsearch/v1", params=params)
+        data = response.json()
 
-    return results
+        for item in data.get("items", []):
+            title = item.get("title", "")
+            snippet = item.get("snippet", "")
+            link = item.get("link", "")
+            combined_results.append(f"- {title}\n  {snippet}\n  {link}")
 
-# Gemini記事生成
+    return combined_results
+
+# Geminiブログ記事生成
 def generate_blog_from_results(country, search_results):
     search_summary = "\n".join(search_results)
     prompt = f"""
-以下の検索結果に基づいて、2025年大阪・関西万博に出展する「{country}パビリオン」について、SNS上での口コミや文化的魅力を3000字程度のブログ記事にまとめてください。
-Markdown形式で、コメント引用部分と解説を分けて見やすく構成してください。
-・WEBに公開されている写真があればリンクを埋め込んでください。
-・まだ公開されてない場合はWEBから予想図の写真をリンク貼り付けしてください。
+以下の検索結果に基づいて、2025年大阪・関西万博に出展する「{country}パビリオン」について、SNS上での口コミや文化的魅力、展示の特徴などを3000字程度で紹介するブログ記事をMarkdown形式で作成してください。
+引用部分と解説を分け、読者が理解しやすい構成にしてください。
+・写真があればリンクを埋め込んでください。
 検索結果:
 {search_summary}
 """
     response = model.generate_content(prompt)
     return response.text.strip()
 
-# 使用済み管理
+# 使用済み管理と記事出力
 root_dir = Path(os.getcwd())
 json_path = root_dir / "used_pavilion_gemini.json"
 all_path = root_dir / "all_countries.json"
@@ -68,18 +71,18 @@ if not remaining_countries:
     print("すべての国が処理済みです。")
     exit()
 
-# ランダム国処理
+# ランダム国選出と記事生成
 country = random.choice(remaining_countries)
 safe_title = country.replace("・", "").replace("（", "").replace("）", "").replace(" ", "")
-results = search_twitter_comments(country)
+results = search_google_pse(country)
 content = generate_blog_from_results(country, results)
 
-# 保存
+# Markdown保存
 post_path = posts_dir / f"{datetime.now().strftime('%Y-%m-%d')}-{safe_title}.md"
 with open(post_path, "w", encoding="utf-8") as f:
     f.write(content)
 
-# 使用済み記録
+# 使用済み国の記録
 used_data["used"].append(country)
 with open(json_path, "w", encoding="utf-8") as f:
     json.dump(used_data, f, ensure_ascii=False, indent=2)

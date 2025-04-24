@@ -12,9 +12,9 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 GOOGLE_SEARCH_CX = os.environ.get("GOOGLE_SEARCH_CX")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-1.5-pro")
 
-# PSE検索実行 + JSON記録
+# PSE検索実行 + JSON記録 + レスポンス出力
 def search_google_pse(country):
     search_terms = ["パビリオン", "食事", "キャラクター", "イベント"]
     combined_results = []
@@ -29,7 +29,16 @@ def search_google_pse(country):
             "num": 5,
         }
         response = requests.get("https://www.googleapis.com/customsearch/v1", params=params)
-        data = response.json()
+        print(f"$D83D$DD0D 検索クエリ: {query}")
+        print(f"$D83D$DCE5 ステータスコード: {response.status_code}")
+        
+        try:
+            data = response.json()
+            print(f"$D83D$DCE6 レスポンス: {json.dumps(data, indent=2, ensure_ascii=False)}")
+        except json.JSONDecodeError:
+            data = {"error": "Invalid JSON response", "status_code": response.status_code}
+            print(f"$274C JSON Decode Error")
+
         raw_data[term] = data
 
         for item in data.get("items", []):
@@ -38,7 +47,7 @@ def search_google_pse(country):
             link = item.get("link", "")
             combined_results.append(f"- {title}\n  {snippet}\n  {link}")
 
-    # 検索結果のJSON保存
+    # 検索結果のJSON保存（空でもファイルを出力）
     timestamp = datetime.now().strftime("%Y%m%d%H:%M:%S")
     log_dir = Path(os.getcwd()) / "search_logs"
     log_dir.mkdir(parents=True, exist_ok=True)

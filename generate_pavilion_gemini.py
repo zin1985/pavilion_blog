@@ -60,10 +60,13 @@ country = random.choice(remaining_countries)
 comments = get_twitter_comments(country)
 content = generate_blog_content(country, comments)
 
-# Markdownファイルとして保存
-safe_title = country.replace("・", "").replace("（", "").replace("）", "")
-post_filename = f"_posts/{datetime.now().strftime('%Y-%m-%d')}-{safe_title}.md"
-with open(Path(__file__).parent / post_filename, "w", encoding="utf-8") as f:
+root_dir = Path(os.getcwd())  # 実行時カレントディレクトリに合わせる
+posts_dir = root_dir / "_posts"
+posts_dir.mkdir(parents=True, exist_ok=True)
+
+# ファイル書き出し
+post_path = posts_dir / f"{datetime.now().strftime('%Y-%m-%d')}-{safe_title}.md"
+with open(post_path, "w", encoding="utf-8") as f:
     f.write(content)
 
 # 使用履歴を更新

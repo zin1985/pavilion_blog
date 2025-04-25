@@ -1,6 +1,6 @@
-title: "名馬ブログ"
-description: "実在した名馬たちの魅力と伝説をAIが解説"
-baseurl: "/meiba_blog"
+title: "関西万博パビリオンブログ"
+description: "関西万博の全てを紹介"
+baseurl: "/pavilion_blog"
 url: "https://zin1985.github.io"
 markdown: kramdown
 theme: minima
@@ -8,3 +8,4 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap

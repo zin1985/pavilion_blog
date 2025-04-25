@@ -1,4 +1,3 @@
-
 import os
 import json
 import random
@@ -25,7 +24,7 @@ def fetch_webpage_text(url):
         soup = BeautifulSoup(response.text, "html.parser")
         for tag in soup(["script", "style"]):
             tag.decompose()
-        return soup.get_text(separator="\n", strip=True)
+        return soup.get_text(separator="\\n", strip=True)
     except Exception as e:
         return f"[本文取得失敗: {e}]"
 
@@ -57,19 +56,19 @@ def search_google_with_scrape(country):
                     "url": url,
                     "text": body[:3000]
                 }
-                summaries.append(f"【{title}】\n{body[:1000]}")
+                summaries.append(f"【{title}】\\n{body[:1000]}")
 
     # HTML本文保存
     os.makedirs("search_logs/html_texts", exist_ok=True)
     with open(f"search_logs/html_texts/{country}.json", "w", encoding="utf-8") as f:
         json.dump(all_html, f, ensure_ascii=False, indent=2)
 
-    return "\n\n".join(summaries)
+    return "\\n\\n".join(summaries)
 
 # Gemini要約
 def generate_summary_from_html(text):
     try:
-        prompt = f"以下は複数のWebページ本文です。万博2025における各国パビリオンの特徴を要約してください。\n\n{text}"
+        prompt = f"以下は複数のWebページ本文です。万博2025における各国パビリオンの特徴を要約してください。\\n\\n{text}"
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
@@ -85,6 +84,16 @@ def main():
         print(f"🟡 {country} を処理中...")
         body_text = search_google_with_scrape(country)
         summary = generate_summary_from_html(body_text)
+
+        # Markdown 出力（ここが正しいインデント）
+        md_dir = "_posts"
+        os.makedirs(md_dir, exist_ok=True)
+        md_filename = os.path.join(md_dir, f"{datetime.now().strftime('%Y-%m-%d')}-{country}.md")
+        with open(md_filename, "w", encoding="utf-8") as f:
+            f.write(f"# {country}のパビリオン要約\\n\\n")
+            f.write(f"**生成日時：** {datetime.now().isoformat()}\\n\\n")
+            f.write(summary)
+
         output_data[country] = {
             "summary": summary,
             "timestamp": datetime.now().isoformat()
@@ -96,13 +105,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-        # Markdown 出力
-        md_dir = "_posts"
-        os.makedirs(md_dir, exist_ok=True)
-        md_filename = os.path.join(md_dir, f"{datetime.now().strftime('%Y-%m-%d')}-{country}.md")
-        with open(md_filename, "w", encoding="utf-8") as f:
-            f.write(f"# {country}のパビリオン要約\n\n")
-            f.write(f"**生成日時：** {datetime.now().isoformat()}\n\n")
-            f.write(summary)

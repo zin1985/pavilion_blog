@@ -41,7 +41,7 @@ def search_google_with_scrape(country):
             "key": GOOGLE_API_KEY,
             "cx": GOOGLE_SEARCH_CX,
             "q": query,
-            "num": 10
+            "num": 3
         }
         response = requests.get("https://www.googleapis.com/customsearch/v1", params=params)
         print(f"[検索] {query} | Status: {response.status_code}")
@@ -69,7 +69,7 @@ def search_google_with_scrape(country):
 # Gemini要約
 def generate_summary_from_html(text):
     try:
-        prompt = f"以下の検索結果に基づいて、2025年大阪・関西万博に出展する「{country}パビリオン」について、SNS上での口コミや文化的魅力、展示の特徴などを3000字程度で紹介するブログ記事をMarkdown形式で作成してください。引用部分と解説を分け、読者が理解しやすい構成にしてください。\n\n{text}"
+        prompt = f"以下は複数のWebページ本文です。万博2025における各国パビリオンの特徴を要約してください。\n\n{text}"
         response = model.generate_content(prompt)
         return response.text.strip()
     except Exception as e:
@@ -82,7 +82,7 @@ def main():
 
     output_data = {}
     for country in countries:
-        print(f"$D83D$DFE1 {country} を処理中...")
+        print(f"🟡 {country} を処理中...")
         body_text = search_google_with_scrape(country)
         summary = generate_summary_from_html(body_text)
         output_data[country] = {
@@ -96,3 +96,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+        # Markdown 出力
+        md_dir = "_posts"
+        os.makedirs(md_dir, exist_ok=True)
+        md_filename = os.path.join(md_dir, f"{datetime.now().strftime('%Y-%m-%d')}-{country}.md")
+        with open(md_filename, "w", encoding="utf-8") as f:
+            f.write(f"# {country}のパビリオン要約\n\n")
+            f.write(f"**生成日時：** {datetime.now().isoformat()}\n\n")
+            f.write(summary)

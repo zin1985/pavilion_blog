@@ -20,9 +20,9 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: 📦 Install dependencies
-        run: pip install google-generativeai
-
+      - name: Install dependencies
+        run: pip install -r requirements.txt  # ← これが必要！
+        
       - name: 🤖 Generate Pavilion Blog Post
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

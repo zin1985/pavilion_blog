@@ -1,10 +1,10 @@
 {
   "アフガニスタン・イスラム共和国": {
-    "summary": "Webページ本文を提供いただければ、万博2025における各国パビリオンの特徴を要約いたします。本文がないため、現状では要約できません。  本文を提示してください。",
-    "timestamp": "2025-09-25T06:34:30.996883"
+    "summary": "[Gemini要約失敗: 404 Publisher Model `projects/generativelanguage-ga/locations/us-central1/publishers/google/models/gemini-1.5-flash-002` was not found or your project does not have access to it. Please ensure you are using a valid model version. For more information, see: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions]",
+    "timestamp": "2025-09-26T06:33:29.635687"
   },
   "ジンバブエ共和国": {
-    "summary": "Webページ本文が提示されていないため、万博2025における各国パビリオンの特徴を要約できません。  本文を提供していただければ、要約を作成します。",
-    "timestamp": "2025-09-25T06:34:33.613617"
+    "summary": "[Gemini要約失敗: 404 Publisher Model `projects/generativelanguage-ga/locations/us-central1/publishers/google/models/gemini-1.5-flash-002` was not found or your project does not have access to it. Please ensure you are using a valid model version. For more information, see: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versions]",
+    "timestamp": "2025-09-26T06:33:31.914089"
   }
 }

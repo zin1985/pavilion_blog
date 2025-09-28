@@ -1,10 +1,10 @@
 {
   "アフガニスタン・イスラム共和国": {
     "summary": "[Gemini要約失敗: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.]",
-    "timestamp": "2025-09-27T06:29:35.556833"
+    "timestamp": "2025-09-28T06:31:30.725927"
   },
   "ジンバブエ共和国": {
     "summary": "[Gemini要約失敗: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.]",
-    "timestamp": "2025-09-27T06:29:37.790536"
+    "timestamp": "2025-09-28T06:31:33.027474"
   }
 }

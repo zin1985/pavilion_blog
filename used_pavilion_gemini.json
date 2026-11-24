@@ -1,10 +1,10 @@
 {
   "アフガニスタン・イスラム共和国": {
     "summary": "[Gemini要約失敗: 403 Permission denied on the service. [reason: \"ACCESS_DENIED\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"Permission denied on the service.\"\n]]",
-    "timestamp": "2026-11-23T17:45:34.225737"
+    "timestamp": "2026-11-24T17:17:27.676707"
   },
   "ジンバブエ共和国": {
     "summary": "[Gemini要約失敗: 403 Permission denied on the service. [reason: \"ACCESS_DENIED\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"Permission denied on the service.\"\n]]",
-    "timestamp": "2026-11-23T17:45:36.600270"
+    "timestamp": "2026-11-24T17:17:30.101862"
   }
 }
